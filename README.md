@@ -27,3 +27,14 @@ python manage.py migrate
 python manage.py runserver
 ```
 - Use the postman collection to understand the endpoints available
+#### You can also have a better detailed documentation about the endpoints or urls using Swagger or Redoc
+- Navigate to the url below for Swagger
+```
+http://127.0.0.1:8000/user/swagger/
+http://127.0.0.1:8000/posts/swagger/
+```
+- Navigate to the Url for Redoc
+```
+http://127.0.0.1:8000/user/redoc/
+http://127.0.0.1:8000/posts/redoc/
+```
