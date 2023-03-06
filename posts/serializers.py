@@ -16,24 +16,26 @@ class ReactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class PostSerializer(serializers.ModelSerializer):
     author = UserProfileSerializer(read_only=True)
     tags = serializers.CharField(required=False)
     image = serializers.ImageField(required=False)
     views = serializers.IntegerField(read_only=True)
+    # topic = serializers.CharField(max_length=3)
 
     class Meta:
         model = Post
         fields = ('id', 'title', 'description', 'author',
-                  'created_at', 'updated_at', 'tags', 'image', 'views')
+                  'created_at', 'updated_at', 'tags', 'image', 'views', 'topic')
 
 
 class AnonymousPostSerializer(serializers.ModelSerializer):
     tags = serializers.CharField(required=False)
     image = serializers.ImageField(required=False)
     views = serializers.IntegerField(read_only=True)
+    # topic = serializers.CharField(max_length=3)
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'description', 'tags', 'image', 'views')
+        fields = ('id', 'title', 'description',
+                  'tags', 'image', 'views', 'topic')

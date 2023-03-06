@@ -8,6 +8,26 @@ from django.db.models.signals import post_save
 User = get_user_model()
 
 
+TOPIC_CHOICES = (
+    ('DIV', 'Divorce and Breakup'),
+    ('REL', 'Relationship and Courtship Journey'),
+    ('OCC', 'Occupation and Career'),
+    ('PRE', 'Pregnancy Experience'),
+    ('MAR', 'Marriage Experience'),
+    ('INT', 'Intimacy'),
+    ('WED', 'Wedding'),
+    ('NEW', 'Newlywed Experience'),
+    ('SIN', 'Single Parenting'),
+    ('TTC', 'TTC'),
+    ('SPI', 'Religion/Spirituality'),
+    ('HEA', 'Health'),
+    ('FAS', 'Fashion'),
+    ('PAR', 'Parental Journey'),
+    ('SOC', 'Social Life'),
+    ('AID', 'Aid and Help (Let Love Lead)'),
+    ('DIY', 'Do It Yourself (DIY)'),
+)
+
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
@@ -20,7 +40,12 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     views = models.PositiveIntegerField(default=0)
-    
+    topic = models.CharField(
+        max_length=3, choices=TOPIC_CHOICES, default='REL')
+
+    def __str__(self):
+        return self.title
+
     def __str__(self):
         return self.title
 

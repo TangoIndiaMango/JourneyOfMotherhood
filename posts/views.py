@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from posts.models import Post, Reaction, Comment
 from .serializers import AnonymousPostSerializer, CommentSerializer, PostSerializer, ReactionSerializer
+from django.db.models import Q
 
 # Create your views here.
 
@@ -66,6 +67,24 @@ class PostDetailAPIView(RetrieveAPIView):
         return obj
 
 
+class PostSearchAPIView(ListAPIView):
+    serializer_class = PostSerializer
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        search_query = self.request.query_params.get('q', '')
+        queryset = Post.objects.all()
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(tags__icontains=search_query) |
+                Q(description__icontains=search_query) |
+                Q(author__icontains=search_query) |
+                Q(topic__icontains=search_query)
+            )
+        return queryset
+
+
 class ReactionCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -116,4 +135,3 @@ class CommentListView(ListAPIView):
         post_id = self.kwargs.get('post_id')
         queryset = Comment.objects.filter(post=post_id)
         return queryset
-
