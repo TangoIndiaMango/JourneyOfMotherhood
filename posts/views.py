@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
+from .permission import IsAuthorOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 from posts.models import Post, Reaction, Comment
-from .serializers import CommentSerializer, PostSerializer, ReactionSerializer
+from .serializers import AnonymousPostSerializer, CommentSerializer, PostSerializer, ReactionSerializer
 
 # Create your views here.
 
@@ -17,56 +18,53 @@ class PostPagination(PageNumberPagination):
     max_page_size = 50
 
 
-class PostListView(ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    pagination_class = PostPagination
-
-
-class PostCreateView(CreateAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostSerializer
-
+class PostCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(author=self.request.user)
+        else:
+            serializer.save()
+
+    def get_serializer_class(self):
+        if self.request.user.is_anonymous:
+            return AnonymousPostSerializer
+        else:
+            return PostSerializer
 
 
-class PostUpdateView(UpdateAPIView):
+class PostUpdateAPIView(UpdateAPIView):
+    queryset = Post.objects.all()
+    permission_classes = [IsAuthorOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.request.user.is_anonymous:
+            return AnonymousPostSerializer
+        else:
+            return PostSerializer
+
+
+class PostDeleteAPIView(DestroyAPIView):
+    queryset = Post.objects.all()
+    permission_classes = [IsAuthorOrReadOnly]
+
+
+class PostListAPIView(ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request, *args, **kwargs):
-        post = self.get_object()
-        if post.author == request.user:
-            return self.update(request, *args, **kwargs)
-        else:
-            return Response({'detail': 'You do not have permission to edit this post.'}, status=status.HTTP_403_FORBIDDEN)
+    pagination_class = PageNumberPagination
 
 
-# class ReactionCreateView(APIView):
-#     permission_classes = [IsAuthenticated]
+class PostDetailAPIView(RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'pk'
 
-#     def post(self, request, post_id):
-#         try:
-#             post = Post.objects.get(pk=post_id)
-#         except Post.DoesNotExist:
-#             return Response({'detail': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+    def get_object(self):
+        obj = super().get_object()
+        obj.views += 1
+        obj.save()
+        return obj
 
-#         reaction_type = request.data.get('reaction_type')
-#         if not reaction_type:
-#             return Response({'detail': 'Missing reaction_type field.'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         reaction = Reaction.objects.filter(
-#             post=post, user=request.user).first()
-#         if reaction:
-#             reaction.reaction_type = reaction_type
-#             reaction.save()
-#         else:
-#             reaction = Reaction.objects.create(
-#                 post=post, user=request.user, reaction_type=reaction_type)
-
-#         return Response({'detail': 'Reaction added.'}, status=status.HTTP_201_CREATED)
 
 class ReactionCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -118,3 +116,4 @@ class CommentListView(ListAPIView):
         post_id = self.kwargs.get('post_id')
         queryset = Comment.objects.filter(post=post_id)
         return queryset
+

@@ -57,20 +57,27 @@ class UserPasswordSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # posts_count = serializers.IntegerField(read_only=True)
-    # followers_count = serializers.IntegerField(read_only=True)
-    # following_count = serializers.IntegerField(read_only=True)
+    post_count = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'gender', 'profile_pic', 'about_me',)
+        fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'gender', 'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count',)
+
+    def get_post_count(self, obj):
+        return obj.get_post_count()
+
+    def get_followers_count(self, obj):
+        return obj.get_followers_count()
+
+    def get_following_count(self, obj):
+        return obj.get_following_count()
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
-    # posts_count = serializers.IntegerField(read_only=True)
-    # followers_count = serializers.IntegerField(read_only=True)
-    # following_count = serializers.IntegerField(read_only=True)
-
     class Meta:
         model = CustomUser
         fields = ('first_name', 'last_name', 'profile_pic', 'about_me',)
+
+

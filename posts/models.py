@@ -1,25 +1,35 @@
+from django.dispatch import receiver
 from django.db import models
 
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 User = get_user_model()
+
 
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='posts')
+        User, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
+    is_anonymous = models.BooleanField(default=False)
+    tags = models.CharField(max_length=200, blank=True)
+    image = models.ImageField(upload_to='post_images', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    views = models.PositiveIntegerField(default=0)
+    
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        super(Post, self).save(*args, **kwargs)
-        self.user.post_count += 1
-        self.user.save()
+
+@receiver(post_save, sender=Post)
+def update_user_profile_post_count(sender, instance, created, **kwargs):
+    if created and instance.author is not None:
+        instance.author.post_count += 1
+        instance.author.save()
 
 
 class Reaction(models.Model):

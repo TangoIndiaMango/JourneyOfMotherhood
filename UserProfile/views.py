@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -34,28 +34,25 @@ class UserLoginView(APIView):
             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# class UserProfileView(APIView):
-#     permission_classes = (IsAuthenticated,)
-#     serializer_class = UserProfileSerializer
+class UserLogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({'detail': 'Logout successful.'})
 
-#     def get(self, request):
-#         serializer = self.serializer_class(request.user)
-#         return Response(serializer.data)
-
-#     def put(self, request):
-#         serializer = self.serializer_class(
-#             request.user, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserProfileSerializer
 
     def get(self, request):
-        serializer = self.serializer_class(request.user)
+        user = request.user
+        posts_count = user.posts.count()
+        followers_count = user.followers.count()
+        following_count = user.following.count()
+        user.posts_count = posts_count
+        user.followers_count = followers_count
+        user.following_count = following_count
+        serializer = self.serializer_class(user)
         return Response(serializer.data)
 
 
@@ -64,12 +61,13 @@ class UserProfileUpdateView(APIView):
     serializer_class = UserProfileUpdateSerializer
 
     def put(self, request):
-        serializer = self.serializer_class(
-            request.user, data=request.data, partial=True)
+        user = request.user
+        serializer = self.serializer_class(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class UserPasswordView(APIView):
@@ -105,18 +103,3 @@ class FollowView(APIView):
 
         return Response({'detail': f'You are now following {user_to_follow.username}.'}, status=status.HTTP_201_CREATED)
 
-
-class UserProfileView(APIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = UserProfileSerializer
-
-    def get(self, request):
-        user = request.user
-        # posts_count = user.posts.count()
-        # followers_count = user.followers.count()
-        # following_count = user.following.count()
-        # user.posts_count = posts_count
-        # user.followers_count = followers_count
-        # user.following_count = following_count
-        serializer = self.serializer_class(user)
-        return Response(serializer.data)

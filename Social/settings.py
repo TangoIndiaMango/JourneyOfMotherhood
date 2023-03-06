@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     
     #3rdParty
     "rest_framework",
+    "drf_yasg",
     #apps
     "UserProfile",
     "posts",
