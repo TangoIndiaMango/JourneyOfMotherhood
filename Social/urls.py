@@ -22,11 +22,11 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Book API",
+        title="Journey of Motherhood",
         default_version='v1',
         description="API for managing books",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@bookapi.local"),
+        contact=openapi.Contact(email="aliyutimileyin2340@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,
