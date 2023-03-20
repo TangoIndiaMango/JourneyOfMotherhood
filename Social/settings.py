@@ -11,21 +11,28 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import environ
+
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+BASE_URL = 'http://localhost:8000'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*7r*xhpve*@6%)igm^!^h4i@y61f^ppp7+u06)g7u6q9+#rpj!"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = "UserProfile.CustomUser"
 
@@ -82,11 +89,17 @@ WSGI_APPLICATION = "Social.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
+}'''
+
+
+
+DATABASES = {
+    "default" : dj_database_url.parse(env("DATABASE_URL"))
 }
 
 
@@ -135,3 +148,17 @@ AUTHENTICATION_BACKENDS = [
     'UserProfile.auth.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'aliyutimileyin@gmail.com'  # Replace with your Gmail address
+EMAIL_HOST_PASSWORD = 'jnhizfbhsbtuqaxi'  # Replace with your Gmail password or app password if 2-factor authentication is enabled
+DEFAULT_FROM_EMAIL = 'aliyutimileyin2340@gmail.com'
+
+#You can also set the SERVER_EMAIL setting to the same value as DEFAULT_FROM_EMAIL to ensure that error messages sent to the site administrators are also sent from the same email address.
+SERVER_EMAIL = DEFAULT_FROM_EMAIL

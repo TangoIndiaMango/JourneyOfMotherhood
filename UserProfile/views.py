@@ -5,8 +5,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .serializers import ForgotPasswordSerializer, ResetPasswordSerializer
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 from .serializers import CustomUserSerializer, UserProfileSerializer, UserPasswordSerializer, UserProfileUpdateSerializer
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -69,7 +76,6 @@ class UserProfileUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class UserPasswordView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserPasswordSerializer
@@ -103,3 +109,67 @@ class FollowView(APIView):
 
         return Response({'detail': f'You are now following {user_to_follow.username}.'}, status=status.HTTP_201_CREATED)
 
+
+class ForgotPasswordView(APIView):
+    serializer_class = ForgotPasswordSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = User.objects.get(email=serializer.validated_data['email'])
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            # uidb64=urlsafe_base64_encode(force_bytes(user.pk))
+            # Send email to user with reset password link
+            # reset_password_url = f"{settings.BASE_URL}/user/reset_password/{uidb64}/{token}"
+            # reset_password_url = f"{settings.BASE_URL}/user/reset_password/uidb64={urlsafe_base64_encode(force_bytes(user.pk))}/token={token}"
+            reset_password_url = f"{settings.BASE_URL}/reset_password/?uidb64={urlsafe_base64_encode(force_bytes(user.pk))}&token={token}"
+            subject = 'Reset Password'
+            message = f'Click the link below to reset your password: {reset_password_url}'
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [user.email]
+            send_mail(subject, message, from_email,
+                      recipient_list, fail_silently=False)
+            return Response({'detail': 'A reset password link has been sent to your email.'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class ResetPasswordView(APIView):
+#     serializer_class = ResetPasswordSerializer
+
+#     def post(self, request, uidb64, token):
+#         serializer = self.serializer_class(data=request.data)
+#         if serializer.is_valid():
+#             try:
+#                 uid = force_text(urlsafe_base64_decode(uidb64))
+#                 user = User.objects.get(pk=uid)
+#             except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#                 user = None
+#             token_generator = PasswordResetTokenGenerator()
+#             if user is not None and token_generator.check_token(user, token):
+#                 user.set_password(serializer.validated_data['new_password'])
+#                 user.save()
+#                 return Response({'detail': 'Password updated successfully.'}, status=status.HTTP_200_OK)
+#         return Response({'detail': 'Invalid reset password link.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPasswordView(APIView):
+    serializer_class = ResetPasswordSerializer
+
+    def get_user(self, uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            User = get_user_model()
+            return User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return None
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = self.get_user(serializer.validated_data['uidb64'])
+            if user is not None and PasswordResetTokenGenerator().check_token(user, serializer.validated_data['token']):
+                user.set_password(serializer.validated_data['new_password'])
+                user.save()
+                return Response({'detail': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid reset password link.'}, status=status.HTTP_400_BAD_REQUEST)

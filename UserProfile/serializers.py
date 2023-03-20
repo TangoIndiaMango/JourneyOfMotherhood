@@ -1,6 +1,9 @@
 from rest_framework import serializers
 import datetime
 from .models import CustomUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -63,7 +66,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'gender', 'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count',)
+        fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'gender',
+                  'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count',)
 
     def get_post_count(self, obj):
         return obj.get_post_count()
@@ -81,3 +85,22 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'profile_pic', 'about_me',)
 
 
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is not registered.")
+        return value
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField()
+    confirm_password = serializers.CharField()
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError('Passwords do not match.')
+        if len(data) < 5:
+            raise serializers.ValidationError('Password is too Short. ')
+        return data
