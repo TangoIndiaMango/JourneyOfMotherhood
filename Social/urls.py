@@ -24,7 +24,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Journey of Motherhood",
         default_version='v1',
-        description="API for managing books",
+        description="API for utilizing Journey of Motherhood endpoints",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="aliyutimileyin2340@gmail.com"),
         license=openapi.License(name="BSD License"),
