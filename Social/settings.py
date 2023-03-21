@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ('*', 'http://localhost:3000', 'localhost:3000')
 
 AUTH_USER_MODEL = "UserProfile.CustomUser"
 
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     #3rdParty
     "rest_framework",
     "drf_yasg",
+    "corsheaders",
     #apps
     "UserProfile",
     "posts",
@@ -56,8 +57,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",    
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,6 +88,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Social.wsgi.application"
+
+#cors
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:8000',
+]
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Database
