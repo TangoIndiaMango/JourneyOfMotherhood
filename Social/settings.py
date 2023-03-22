@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     #apps
     "UserProfile",
     "posts",
+    "gateway",
     
 ]
 
@@ -68,6 +69,13 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES" : ("gateway.authentication.Authentication",),
+    "EXCEPTION_HANDLER": "gateway.custom_handlers.custom_exception_handler"
+}
+
+
 
 ROOT_URLCONF = "Social.urls"
 

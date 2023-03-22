@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from gateway.authentication import Authentication
 from .serializers import ForgotPasswordSerializer, ResetPasswordSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
@@ -29,25 +31,26 @@ class UserRegistrationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserLoginView(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return Response({'detail': 'Authentication successful.'})
-        else:
-            return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+# class UserLoginView(APIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         password = request.data.get('password')
+#         user = authenticate(request, email=email, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return Response({'detail': 'Authentication successful.'})
+#         else:
+#             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class UserLogoutView(APIView):
-    def post(self, request):
-        logout(request)
-        return Response({'detail': 'Logout successful.'})
+# class UserLogoutView(APIView):
+#     def post(self, request):
+#         logout(request)
+#         return Response({'detail': 'Logout successful.'})
 
 
 class UserProfileView(APIView):
+    authentication_classes = [Authentication]
     permission_classes = (IsAuthenticated,)
     serializer_class = UserProfileSerializer
 
@@ -64,6 +67,7 @@ class UserProfileView(APIView):
 
 
 class UserProfileUpdateView(APIView):
+    authentication_classes = [Authentication]
     permission_classes = (IsAuthenticated,)
     serializer_class = UserProfileUpdateSerializer
 
@@ -77,6 +81,7 @@ class UserProfileUpdateView(APIView):
 
 
 class UserPasswordView(APIView):
+    authentication_classes = [Authentication]
     permission_classes = (IsAuthenticated,)
     serializer_class = UserPasswordSerializer
 
@@ -111,6 +116,7 @@ class FollowView(APIView):
 
 
 class ForgotPasswordView(APIView):
+    authentication_classes = [Authentication]
     serializer_class = ForgotPasswordSerializer
 
     def post(self, request):
