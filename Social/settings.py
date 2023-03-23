@@ -30,7 +30,7 @@ BASE_URL = 'http://localhost:8000'
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ('*', 'http://localhost:3000', 'localhost:3000')
 
@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     #apps
     "UserProfile",
     "posts",
-    "gateway",
+    "quotes",
     
 ]
 
@@ -71,10 +71,15 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES" : ("gateway.authentication.Authentication",),
-    "EXCEPTION_HANDLER": "gateway.custom_handlers.custom_exception_handler"
+    "DEFAULT_AUTHENTICATION_CLASSES" : ("rest_framework_simplejwt.authentication.JWTAuthentication", ),
 }
 
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=25),
+    'ROTATE_REFRESH_TOKENS': True,
+}
 
 
 ROOT_URLCONF = "Social.urls"
