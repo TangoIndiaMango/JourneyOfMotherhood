@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ('*', 'http://localhost:3000', 'localhost:3000')
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = "UserProfile.CustomUser"
 
@@ -108,6 +108,9 @@ WSGI_APPLICATION = "Social.wsgi.application"
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:8000',
+    'http://vercel.app',
+    'http://*',
+    'https://*',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
