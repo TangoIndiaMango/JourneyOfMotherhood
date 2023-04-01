@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "corsheaders",
+    "django_seed",
     #apps
     "UserProfile",
     "posts",

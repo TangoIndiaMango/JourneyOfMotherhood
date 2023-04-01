@@ -7,8 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 from posts.models import Post, Reaction, Comment
-from .serializers import AnonymousPostSerializer, CommentSerializer, PostSerializer, ReactionSerializer
-from django.db.models import Q
+from .serializers import AnonymousPostSerializer, CommentSerializer, PopularTopicSerializer, PostSerializer, ReactionSerializer
+from django.db.models import Q, Count
 
 # Create your views here.
 
@@ -79,7 +79,7 @@ class PostSearchAPIView(ListAPIView):
                 Q(title__icontains=search_query) |
                 Q(tags__icontains=search_query) |
                 Q(description__icontains=search_query) |
-                Q(author__icontains=search_query) |
+                Q(author__email__icontains=search_query) |
                 Q(topic__icontains=search_query)
             )
         return queryset
@@ -135,3 +135,12 @@ class CommentListView(ListAPIView):
         post_id = self.kwargs.get('post_id')
         queryset = Comment.objects.filter(post=post_id)
         return queryset
+
+
+class PopularTopicsView(APIView):
+    def get(self, request):
+        popular_topics = Post.objects.values('topic').annotate(count=Count('id')).order_by('-count')[:10]
+        serializer = PopularTopicSerializer(popular_topics, many=True)
+        return Response(serializer.data)
+    
+

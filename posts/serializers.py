@@ -39,3 +39,10 @@ class AnonymousPostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'title', 'description',
                   'tags', 'image', 'views', 'topic')
+
+class PopularTopicSerializer(serializers.ModelSerializer):
+    count = serializers.IntegerField()
+
+    class Meta:
+        model = Post
+        fields = ['topic', 'count']

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.dispatch import receiver
 from django.db import models
 
@@ -55,6 +56,24 @@ def update_user_profile_post_count(sender, instance, created, **kwargs):
     if created and instance.author is not None:
         instance.author.post_count += 1
         instance.author.save()
+
+    # Update the cache for recently created posts
+    cache_key = 'recently_created_posts'
+    cache.delete(cache_key)
+
+
+def get_recently_created_posts():
+    """
+    Returns a list of recently created posts
+    """
+    cache_key = 'recently_created_posts'
+    recently_created_posts = cache.get(cache_key)
+
+    if recently_created_posts is None:
+        recently_created_posts = Post.objects.order_by('-created_at')[:10]
+        cache.set(cache_key, recently_created_posts)
+
+    return recently_created_posts
 
 
 class Reaction(models.Model):
