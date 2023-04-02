@@ -71,7 +71,6 @@ class PostSearchAPIView(ListAPIView):
     serializer_class = PostSerializer
     pagination_class = PageNumberPagination
 
-
     def get_queryset(self):
         search_params = self.request.query_params.dict()
         queryset = Post.objects.all()
@@ -84,9 +83,11 @@ class PostSearchAPIView(ListAPIView):
                 lookup = key_parts[1]
             else:
                 lookup = 'icontains'
-            filter_kwargs = {f'{key}__{lookup}': value}
+                key = f'{key}__{lookup}'
+            filter_kwargs = {key: value}
             queryset = queryset.filter(**filter_kwargs)
         return queryset
+
 
 
     # def get_queryset(self):
