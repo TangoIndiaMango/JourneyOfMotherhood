@@ -71,37 +71,33 @@ class PostSearchAPIView(ListAPIView):
     serializer_class = PostSerializer
     pagination_class = PageNumberPagination
 
-    def get_queryset(self):
-        search_params = self.request.query_params.dict()
-        queryset = Post.objects.all()
-        for key, value in search_params.items():
-            if key in ['page', 'page_size']:
-                continue
-            if '__' in key:
-                key_parts = key.split('__')
-                key = key_parts[0]
-                lookup = key_parts[1]
-            else:
-                lookup = 'icontains'
-                key = f'{key}__{lookup}'
-            filter_kwargs = {key: value}
-            queryset = queryset.filter(**filter_kwargs)
-        return queryset
-
-
-
     # def get_queryset(self):
-    #     search_query = self.request.query_params.get('q', '')
+    #     search_params = self.request.query_params.dict()
     #     queryset = Post.objects.all()
-    #     if search_query:
-    #         queryset = queryset.filter(
-    #             Q(title__icontains=search_query) |
-    #             Q(tags__icontains=search_query) |
-    #             Q(description__icontains=search_query) |
-    #             Q(author__email__icontains=search_query) |
-    #             Q(topic__icontains=search_query)
-    #         )
+    #     for key, value in search_params.items():
+    #         if key in ['page', 'page_size']:
+    #             continue
+    #         if '__' in key:
+    #             key_parts = key.split('__')
+    #             key = key_parts[0]
+    #             lookup = key_parts[1]
+    #         else:
+    #             lookup = 'icontains'
+    #             key = f'{key}__{lookup}'
+    #         filter_kwargs = {key: value}
+    #         queryset = queryset.filter(**filter_kwargs)
     #     return queryset
+
+    def get_queryset(self):
+        search_query = self.request.query_params.get('q', '')
+        queryset = Post.objects.all()
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(description__icontains=search_query) |
+                Q(topic__icontains=search_query)
+            )
+        return queryset
 
 
 class ReactionCreateView(APIView):
@@ -158,8 +154,7 @@ class CommentListView(ListAPIView):
 
 class PopularTopicsView(APIView):
     def get(self, request):
-        popular_topics = Post.objects.values('topic').annotate(count=Count('id')).order_by('-count')[:10]
+        popular_topics = Post.objects.values('topic').annotate(
+            count=Count('id')).order_by('-count')[:10]
         serializer = PopularTopicSerializer(popular_topics, many=True)
         return Response(serializer.data)
-    
-
