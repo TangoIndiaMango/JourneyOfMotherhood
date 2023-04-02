@@ -71,18 +71,36 @@ class PostSearchAPIView(ListAPIView):
     serializer_class = PostSerializer
     pagination_class = PageNumberPagination
 
+
     def get_queryset(self):
-        search_query = self.request.query_params.get('q', '')
+        search_params = self.request.query_params.dict()
         queryset = Post.objects.all()
-        if search_query:
-            queryset = queryset.filter(
-                Q(title__icontains=search_query) |
-                Q(tags__icontains=search_query) |
-                Q(description__icontains=search_query) |
-                Q(author__email__icontains=search_query) |
-                Q(topic__icontains=search_query)
-            )
+        for key, value in search_params.items():
+            if key in ['page', 'page_size']:
+                continue
+            if '__' in key:
+                key_parts = key.split('__')
+                key = key_parts[0]
+                lookup = key_parts[1]
+            else:
+                lookup = 'icontains'
+            filter_kwargs = {f'{key}__{lookup}': value}
+            queryset = queryset.filter(**filter_kwargs)
         return queryset
+
+
+    # def get_queryset(self):
+    #     search_query = self.request.query_params.get('q', '')
+    #     queryset = Post.objects.all()
+    #     if search_query:
+    #         queryset = queryset.filter(
+    #             Q(title__icontains=search_query) |
+    #             Q(tags__icontains=search_query) |
+    #             Q(description__icontains=search_query) |
+    #             Q(author__email__icontains=search_query) |
+    #             Q(topic__icontains=search_query)
+    #         )
+    #     return queryset
 
 
 class ReactionCreateView(APIView):
