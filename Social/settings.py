@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ('*', 'https://journey-of-motherhood.vercel.app/',)
 
 AUTH_USER_MODEL = "UserProfile.CustomUser"
 
@@ -110,6 +110,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://vercel.app',
     'http://*',
+    'https://journey-of-motherhood.vercel.app',
     'https://*',
 ]
 CORS_ALLOW_CREDENTIALS = True
