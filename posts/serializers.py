@@ -5,9 +5,10 @@ from .models import Comment, Post, Reaction
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'created_at', 'updated_at']
+        fields = ['id', 'text', 'user', 'created_at', 'updated_at']
 
 
 class ReactionSerializer(serializers.ModelSerializer):

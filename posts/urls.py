@@ -10,7 +10,6 @@ urlpatterns = [
          ReactionListView.as_view(), name="reaction_list"),
     path('<int:post_id>/comment/', CommentCreateView.as_view(), name='comment_post'),
     path('comment/<int:post_id>/', CommentListView.as_view(), name='list_comment'),
-
     path('all/', PostListAPIView.as_view(), name='post-list'),
     path('<int:pk>/', PostDetailAPIView.as_view(), name='post-detail'),
     path('create/', PostCreateAPIView.as_view(), name='post-create'),
