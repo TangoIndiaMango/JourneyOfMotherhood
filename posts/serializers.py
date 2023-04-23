@@ -47,3 +47,15 @@ class PopularTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['topic', 'count']
+        
+
+class TrendingPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'views')
+
+
+class NewPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'created_at')

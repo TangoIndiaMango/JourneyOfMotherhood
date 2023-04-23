@@ -7,7 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 from posts.models import Post, Reaction, Comment
-from .serializers import AnonymousPostSerializer, CommentSerializer, PopularTopicSerializer, PostSerializer, ReactionSerializer
+from .serializers import AnonymousPostSerializer, CommentSerializer, NewPostSerializer, PopularTopicSerializer, PostSerializer, ReactionSerializer, TrendingPostSerializer
 from django.db.models import Q, Count
 
 # Create your views here.
@@ -157,4 +157,18 @@ class PopularTopicsView(APIView):
         popular_topics = Post.objects.values('topic').annotate(
             count=Count('id')).order_by('-count')[:10]
         serializer = PopularTopicSerializer(popular_topics, many=True)
+        return Response(serializer.data)
+class TrendingPostsView(APIView):
+    def get(self, request, format=None):
+        # Queryset to get trending posts based on views count
+        queryset = Post.objects.order_by('-views')[:10]
+        serializer = TrendingPostSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class NewPostsView(APIView):
+    def get(self, request, format=None):
+        # Queryset to get new posts based on created_at field
+        queryset = Post.objects.order_by('-created_at')[:10]
+        serializer = NewPostSerializer(queryset, many=True)
         return Response(serializer.data)

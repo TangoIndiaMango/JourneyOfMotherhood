@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import CommentCreateView, CommentListView, PostCreateAPIView, PostDeleteAPIView, PostDetailAPIView, PostListAPIView, PostSearchAPIView, PostUpdateAPIView, PopularTopicsView, ReactionCreateView, ReactionListView
+from .views import CommentCreateView, CommentListView, NewPostsView, PostCreateAPIView, PostDeleteAPIView, PostDetailAPIView, PostListAPIView, PostSearchAPIView, PostUpdateAPIView, PopularTopicsView, ReactionCreateView, ReactionListView, TrendingPostsView
 
 
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
     path('<int:pk>/update/', PostUpdateAPIView.as_view(), name='post-update'),
     path('<int:pk>/delete/', PostDeleteAPIView.as_view(), name='post-delete'),
     path('search/', PostSearchAPIView.as_view(), name='post-search'),
-    path('popular/', PopularTopicsView.as_view(), name='popular-topics')
-    
+    path('popular/', PopularTopicsView.as_view(), name='popular-topics'),
+    path('trending/', TrendingPostsView.as_view(), name='trending_posts'),
+    path('new/', NewPostsView.as_view(), name='new_posts'),
 ]
