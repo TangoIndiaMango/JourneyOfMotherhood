@@ -33,6 +33,7 @@ class UserRegistrationView(APIView):
 
 
 class UserLoginView(APIView):
+    
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
@@ -43,7 +44,19 @@ class UserLoginView(APIView):
             return Response({
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),
-                'user': User,
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'gender': user.gender,
+                    'date_of_birth': user.date_of_birth,
+                    'about_me': user.about_me,
+                    'created_at': user.created_at,
+
+                    # Include any other user data that you want to return in the response
+                }
+        
             })
         else:
             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
