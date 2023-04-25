@@ -53,8 +53,6 @@ class UserLoginView(APIView):
                     'date_of_birth': user.date_of_birth,
                     'about_me': user.about_me,
                     'created_at': user.created_at,
-
-                    # Include any other user data that you want to return in the response
                 }
         
             })
