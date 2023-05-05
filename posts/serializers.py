@@ -18,7 +18,7 @@ class ReactionSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = UserProfileSerializer(required=False)
+    user = UserProfileSerializer(required=False)
     tags = serializers.CharField(required=False)
     image = serializers.ImageField(required=False)
     views = serializers.IntegerField(read_only=True)
@@ -26,7 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'description', 'author',
+        fields = ('id', 'title', 'description', 'user',
                   'created_at', 'updated_at', 'tags', 'image', 'views', 'topic')
 
 

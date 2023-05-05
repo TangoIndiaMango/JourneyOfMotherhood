@@ -33,7 +33,7 @@ TOPIC_CHOICES = (
 class Post(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    author = models.ForeignKey(
+    user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
     is_anonymous = models.BooleanField(default=False)
     tags = models.CharField(max_length=200, blank=True)
