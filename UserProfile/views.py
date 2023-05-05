@@ -186,7 +186,7 @@ class TopUsersView(APIView):
         ).annotate(
             num_following=Count('following')
         ).annotate(
-            post_count=Count('posts')
+            num_post=Count('posts')
         ).order_by('-post_count')[:10]
         serializer = CustomUserSerializer(queryset, many=True)
         return Response(serializer.data)
