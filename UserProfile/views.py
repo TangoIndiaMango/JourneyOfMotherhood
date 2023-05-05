@@ -182,7 +182,7 @@ class ResetPasswordView(APIView):
 class TopUsersView(APIView):
     def get(self, request, format=None):
         queryset = CustomUser.objects.annotate(
-            followers_count=Count('followers')
+            num_followers=Count('followers')
         ).annotate(
             following_count=Count('following')
         ).annotate(
@@ -190,6 +190,7 @@ class TopUsersView(APIView):
         ).order_by('-post_count')[:10]
         serializer = CustomUserSerializer(queryset, many=True)
         return Response(serializer.data)
+
 
 
 # class ResetPasswordView(APIView):
