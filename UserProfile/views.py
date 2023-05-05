@@ -184,7 +184,7 @@ class TopUsersView(APIView):
         queryset = CustomUser.objects.annotate(
             num_followers=Count('followers')
         ).annotate(
-            following_count=Count('following')
+            num_following=Count('following')
         ).annotate(
             post_count=Count('posts')
         ).order_by('-post_count')[:10]

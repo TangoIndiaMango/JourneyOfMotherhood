@@ -19,4 +19,4 @@ class Notification(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.notification_type} notification for user {self.user.username}"
+        return f"{self.notification_type} notification for user {self.user.email}"
