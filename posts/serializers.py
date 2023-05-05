@@ -26,8 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'description', 'user',
-                  'created_at', 'updated_at', 'tags', 'image', 'views', 'topic')
+        fields = "__all__"
 
 
 class AnonymousPostSerializer(serializers.ModelSerializer):

@@ -53,9 +53,9 @@ class Post(models.Model):
 
 @receiver(post_save, sender=Post)
 def update_user_profile_post_count(sender, instance, created, **kwargs):
-    if created and instance.author is not None:
-        instance.author.post_count += 1
-        instance.author.save()
+    if created and instance.user is not None:
+        instance.user.post_count += 1
+        instance.user.save()
 
     # Update the cache for recently created posts
     cache_key = 'recently_created_posts'

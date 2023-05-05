@@ -5,9 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Notification
 from .serializers import NotificationSerializer
-
+from rest_framework.permissions import IsAuthenticated
 
 class NotificationListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         # Queryset to get all notifications for the authenticated user
         queryset = Notification.objects.filter(user=request.user).order_by('-created_at')
