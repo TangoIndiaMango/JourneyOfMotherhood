@@ -22,7 +22,7 @@ class PostPagination(PageNumberPagination):
 class PostCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
-            serializer.save(author=self.request.user)
+            serializer.save(user=self.request.user)
         else:
             serializer.save()
 
