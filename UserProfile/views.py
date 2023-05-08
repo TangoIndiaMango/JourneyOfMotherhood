@@ -231,3 +231,4 @@ class TopUsersView(APIView):
 #                 user.save()
 #                 return Response({'detail': 'Password updated successfully.'}, status=status.HTTP_200_OK)
 #         return Response({'detail': 'Invalid reset password link.'}, status=status.HTTP_400_BAD_REQUEST)
+

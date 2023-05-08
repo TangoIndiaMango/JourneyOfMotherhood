@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     "UserProfile",
     "posts",
     "quotes",
-    "notifications"
+    "follow",
+    "notifications",
     
 ]
 

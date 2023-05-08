@@ -16,13 +16,16 @@ class NotificationListView(APIView):
         return Response(serializer.data)
 
 
+
 class NotificationMarkAsReadView(APIView):
     def post(self, request, format=None):
-        # Mark all notifications as read for the authenticated user
-        Notification.objects.filter(user=request.user).update(read=True)
-        return Response({'message': 'All notifications marked as read.'})
-
-
+        if request.user.is_authenticated:
+            # Mark all notifications as read for the authenticated user
+            Notification.objects.filter(user=request.user).update(read=True)
+            return Response({'message': 'All notifications marked as read.'})
+        else:
+            return Response({'error': 'User not authenticated.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
 class NotificationMarkSingleAsReadView(APIView):
     def post(self, request, notification_id, format=None):
         # Mark a single notification as read for the authenticated user

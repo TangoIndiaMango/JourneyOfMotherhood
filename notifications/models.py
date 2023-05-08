@@ -15,6 +15,7 @@ class Notification(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     notification_type = models.CharField(choices=NOTIFICATION_TYPES, max_length=20)
+    read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
