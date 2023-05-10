@@ -68,7 +68,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers = FollowSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'gender',
+        fields = ('id','email', 'first_name', 'last_name', 'date_of_birth', 'gender',
                   'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count', 'followers',)
 
     def get_post_count(self, obj):
