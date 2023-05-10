@@ -41,20 +41,11 @@ class UserLoginView(APIView):
         if user is not None:
             login(request, user)
             refresh = RefreshToken.for_user(user)
+            serializer = UserProfileSerializer(user)
             return Response({
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),
-                'user': {
-                    'id': user.id,
-                    'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'gender': user.gender,
-                    'date_of_birth': user.date_of_birth,
-                    'about_me': user.about_me,
-                    'created_at': user.created_at,
-                }
-        
+                'user': serializer.data
             })
         else:
             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)

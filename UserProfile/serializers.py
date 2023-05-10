@@ -1,5 +1,7 @@
 from rest_framework import serializers
 import datetime
+
+from follow.serializers import FollowSerializer
 from .models import CustomUser
 from django.contrib.auth import get_user_model
 
@@ -63,11 +65,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     post_count = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
-
+    followers = FollowSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
         fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'gender',
-                  'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count',)
+                  'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count', 'followers',)
 
     def get_post_count(self, obj):
         return obj.get_post_count()
