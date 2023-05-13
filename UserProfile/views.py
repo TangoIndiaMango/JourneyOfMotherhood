@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from django.db.models import Q, Count
 from UserProfile.models import CustomUser
+from follow.serializers import FollowSerializer
 from .serializers import ForgotPasswordSerializer, ResetPasswordSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
@@ -102,23 +103,56 @@ class UserPasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class FollowView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
         try:
-            user_to_follow = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
+            user_to_follow = CustomUser.objects.get(pk=user_id)
+        except CustomUser.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         if request.user == user_to_follow:
             return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if request.user.following.filter(pk=user_id).exists():
+            return Response({'detail': 'You have already followed this user.'}, status=status.HTTP_400_BAD_REQUEST)
+
         request.user.following.add(user_to_follow)
         request.user.following_count += 1
-        request.user.save()
+        user_to_follow.followers.add(request.user)
+        user_to_follow.followers_count += 1
 
-        return Response({'detail': f'You are now following {user_to_follow.username}.'}, status=status.HTTP_201_CREATED)
+        request.user.save()
+        user_to_follow.save()
+
+        serializer = FollowSerializer(user_to_follow, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class FollowDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        try:
+            user_to_unfollow = CustomUser.objects.get(pk=user_id)
+        except CustomUser.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user == user_to_unfollow:
+            return Response({'detail': 'You cannot unfollow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.following.remove(user_to_unfollow)
+        request.user.following_count -= 1
+        user_to_unfollow.followers.remove(request.user)
+        user_to_unfollow.followers_count -= 1
+
+        request.user.save()
+        user_to_unfollow.save()
+
+        return Response({'detail': f'You have unfollowed {user_to_unfollow.email}.'}, status=status.HTTP_200_OK)
 
 
 class ForgotPasswordView(APIView):

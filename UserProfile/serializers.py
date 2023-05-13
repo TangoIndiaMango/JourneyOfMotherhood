@@ -65,11 +65,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     post_count = serializers.SerializerMethodField()
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
-    followers = FollowSerializer(many=True, read_only=True)
+    following = serializers.SerializerMethodField()
     class Meta:
         model = CustomUser
         fields = ('id','email', 'first_name', 'last_name', 'date_of_birth', 'gender',
-                  'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count', 'followers',)
+                  'profile_pic', 'about_me', 'post_count', 'followers_count', 'following_count', 'following')
 
     def get_post_count(self, obj):
         return obj.get_post_count()
@@ -79,6 +79,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, obj):
         return obj.get_following_count()
+    
+    def get_following(self, obj):
+        return obj.following.values_list('id', flat=True)
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
@@ -106,3 +109,20 @@ class ResetPasswordSerializer(serializers.Serializer):
         if len(data) < 5:
             raise serializers.ValidationError('Password is too Short. ')
         return data
+
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    user_profile = UserProfileSerializer(source='user', read_only=True)
+    is_following = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'user_profile', 'is_following')
+
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.followers.filter(pk=request.user.pk).exists()
+        return False 
+

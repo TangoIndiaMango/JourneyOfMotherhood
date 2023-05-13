@@ -1,7 +1,11 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Follow
+from rest_framework.permissions import IsAuthenticated
+from UserProfile.models import CustomUser
 from .serializers import FollowSerializer
+from rest_framework.views import APIView
+
 
 class FollowCreateAPIView(generics.CreateAPIView):
     queryset = Follow.objects.all()
@@ -32,3 +36,4 @@ class FollowDeleteAPIView(generics.DestroyAPIView):
 
     def perform_destroy(self, instance):
         instance.delete()
+
