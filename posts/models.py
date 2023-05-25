@@ -27,7 +27,8 @@ TOPIC_CHOICES = (
     ('SOC', 'Social Life'),
     ('AID', 'Aid and Help (Let Love Lead)'),
     ('DIY', 'Do It Yourself (DIY)'),
-    ('MSK', 'Mother with special need Kid')
+    ('MSK', 'Mother with special need Kid'),
+    ('OTHERS', 'Others')
 )
 
 
@@ -43,7 +44,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     views = models.PositiveIntegerField(default=0)
     topic = models.CharField(
-        max_length=3, choices=TOPIC_CHOICES, default='REL')
+        max_length=200, choices=TOPIC_CHOICES, default='REL')
 
     def __str__(self):
         return self.title
