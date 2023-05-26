@@ -114,6 +114,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://*',
     'https://journey-of-motherhood.vercel.app',
     'https://*',
+    "https://www.journeyofmotherhood.org",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
