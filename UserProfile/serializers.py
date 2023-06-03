@@ -89,6 +89,11 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('first_name', 'last_name', 'profile_pic', 'about_me',)
 
+class ChangePasswordSerializer(serializers.Serializer):
+    model = CustomUser
+    
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
 
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -106,7 +111,7 @@ class ResetPasswordSerializer(serializers.Serializer):
     def validate(self, data):
         if data['new_password'] != data['confirm_password']:
             raise serializers.ValidationError('Passwords do not match.')
-        if len(data) < 5:
+        if len(data['new_password']) < 5:
             raise serializers.ValidationError('Password is too Short. ')
         return data
 
