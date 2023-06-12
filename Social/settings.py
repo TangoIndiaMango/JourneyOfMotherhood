@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ('*', 'https://journey-of-motherhood.vercel.app/',)
 
 AUTH_USER_MODEL = "UserProfile.CustomUser"
 
+APPEND_SLASH = False
+
 # Application definition
 
 INSTALLED_APPS = [

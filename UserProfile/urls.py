@@ -19,7 +19,7 @@ urlpatterns = [
     path('topusers/', TopUsersView.as_view(), name='top_users'),
     path('follow/<int:user_id>/', FollowView.as_view(), name='follow'),
     path('unfollow/<int:user_id>/', FollowDeleteView.as_view(), name='unfollow'),
-    path('confirm-reset-password/<str:uidb64>/<str:token>/', ConfirmResetPasswordView.as_view(), name='confirm-reset-password'),
+    path('confirm-reset-password/<str:uidb64>/<str:token>', ConfirmResetPasswordView.as_view(), name='confirm-reset-password'),
     path('topusers/', TopUsersView.as_view(), name='top_users'),
     
 ]
