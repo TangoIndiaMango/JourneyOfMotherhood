@@ -200,7 +200,7 @@ class ResetPasswordView(APIView):
             token = generate_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
 
-            reset_password_url = f"{settings.BASE_URL}/user/confirm-reset-password/{uidb64}/{token}/"
+            reset_password_url = f"http://localhost:3000/user/confirm-reset-password/{uidb64}/{token}/"
             subject = 'Reset Your Journey of Motherhood Password'
             message = f'Click the link below to reset your password: {reset_password_url}'
             from_email = settings.DEFAULT_FROM_EMAIL
