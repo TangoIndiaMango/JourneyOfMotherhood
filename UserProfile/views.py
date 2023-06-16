@@ -191,9 +191,7 @@ class ChangePasswordView(APIView):
             return Response(response)
     
 
-
 class ResetPasswordView(APIView):
-    
     def post(self, request):
         email = request.data.get('email')
         user = User.objects.filter(email=email).first()
@@ -201,12 +199,8 @@ class ResetPasswordView(APIView):
         if user is not None:
             token = generate_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-            current_site = get_current_site(request)
-            if current_site:
-                reset_password_path = reverse('confirm-reset-password', kwargs={'uidb64': uidb64, 'token': token})
-                reset_password_url = f"{request.scheme}://{current_site.domain}{reset_password_path}"
-            else:
-                reset_password_url = f"https://joruneyofmotherhood.org/{reset_password_path}"
+            reset_password_url = f"https://journeyofmotherhood.org/user/confirm-reset-password/{uidb64}/{token}"
+
             subject = 'Reset Your Journey of Motherhood Password'
             message = f'Click the link below to reset your password: {reset_password_url}'
             from_email = settings.DEFAULT_FROM_EMAIL
@@ -217,7 +211,6 @@ class ResetPasswordView(APIView):
             return Response({'detail': 'A reset password link has been sent to your email.'}, status=status.HTTP_200_OK)
 
         return Response({'detail': 'Invalid email.'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ConfirmResetPasswordView(APIView):
     def post(self, request, uidb64, token):
