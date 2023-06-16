@@ -199,7 +199,13 @@ class ResetPasswordView(APIView):
         if user is not None:
             token = generate_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_password_url = f"https://journeyofmotherhood.org/user/confirm-reset-password/{uidb64}/{token}"
+            base_url = request.data.get('base_url')  # Assuming the base URL is sent from the frontend
+
+            if base_url:
+                reset_password_url = f"{base_url}/user/confirm-reset-password/{uidb64}/{token}"
+            else:
+                # Set a default base URL if none is provided from the frontend
+                reset_password_url = f"https://journeyofmotherhood.org/user/confirm-reset-password/{uidb64}/{token}"
 
             subject = 'Reset Your Journey of Motherhood Password'
             message = f'Click the link below to reset your password: {reset_password_url}'
@@ -211,6 +217,7 @@ class ResetPasswordView(APIView):
             return Response({'detail': 'A reset password link has been sent to your email.'}, status=status.HTTP_200_OK)
 
         return Response({'detail': 'Invalid email.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ConfirmResetPasswordView(APIView):
     def post(self, request, uidb64, token):
