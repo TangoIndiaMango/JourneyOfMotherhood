@@ -202,8 +202,11 @@ class ResetPasswordView(APIView):
             token = generate_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             current_site = get_current_site(request)
-            reset_password_path = reverse('confirm-reset-password', kwargs={'uidb64': uidb64, 'token': token})
-            reset_password_url = f"{request.scheme}://{current_site.domain}{reset_password_path}"
+            if current_site:
+                reset_password_path = reverse('confirm-reset-password', kwargs={'uidb64': uidb64, 'token': token})
+                reset_password_url = f"{request.scheme}://{current_site.domain}{reset_password_path}"
+            else:
+                reset_password_url = f"https://joruneyofmotherhood.org/{reset_password_path}"
             subject = 'Reset Your Journey of Motherhood Password'
             message = f'Click the link below to reset your password: {reset_password_url}'
             from_email = settings.DEFAULT_FROM_EMAIL
