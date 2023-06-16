@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import ChangePasswordView, ConfirmResetPasswordView, FollowView, ResetPasswordView, TopUsersView, FollowDeleteView, UserLoginView, UserLogoutView, UserProfileUpdateView, UserRegistrationView, UserProfileView, UserPasswordView
 from rest_framework_simplejwt.views import (TokenRefreshView,)
+from django.contrib.sites.shortcuts import get_current_site
 
 
 urlpatterns = [

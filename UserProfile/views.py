@@ -12,6 +12,7 @@ from follow.serializers import FollowSerializer
 from .serializers import ChangePasswordSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
+from django.urls import reverse
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
@@ -201,7 +202,8 @@ class ResetPasswordView(APIView):
             token = generate_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             current_site = get_current_site(request)
-            reset_password_url = f"{request.scheme}://{current_site.domain}/user/confirm-reset-password/{uidb64}/{token}"
+            reset_password_path = reverse('confirm-reset-password', kwargs={'uidb64': uidb64, 'token': token})
+            reset_password_url = f"{request.scheme}://{current_site.domain}{reset_password_path}"
             subject = 'Reset Your Journey of Motherhood Password'
             message = f'Click the link below to reset your password: {reset_password_url}'
             from_email = settings.DEFAULT_FROM_EMAIL
