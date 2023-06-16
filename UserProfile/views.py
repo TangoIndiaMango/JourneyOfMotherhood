@@ -201,7 +201,6 @@ class ResetPasswordView(APIView):
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             base_url = request.data.get('base_url')  # Assuming the base URL is sent from the frontend
             current_site = get_current_site(request)
-            
             if current_site:
                 reset_password_path = reverse('confirm-reset-password', kwargs={'uidb64': uidb64, 'token': token})
                 reset_password_url = f"{request.scheme}://{current_site.domain}{reset_password_path}"
