@@ -190,13 +190,13 @@ AUTHENTICATION_BACKENDS = [
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_HOST")
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'aliyutimileyin@gmail.com'  # Replace with your Gmail address
-EMAIL_HOST_PASSWORD = 'jnhizfbhsbtuqaxi'  # Replace with your Gmail password or app password if 2-factor authentication is enabled
-DEFAULT_FROM_EMAIL = 'aliyutimileyin2340@gmail.com'
+EMAIL_HOST_USER = env("EMAIL_HOST")  
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST")  
+DEFAULT_FROM_EMAIL = env("EMAIL_HOST")
 
 #You can also set the SERVER_EMAIL setting to the same value as DEFAULT_FROM_EMAIL to ensure that error messages sent to the site administrators are also sent from the same email address.
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
