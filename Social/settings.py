@@ -12,11 +12,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
-import environ
+from dotenv import load_dotenv
 import os
 
-env = environ.Env()
-environ.Env.read_env()
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +27,7 @@ BASE_URL = 'http://localhost:8000'
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -134,7 +134,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 DATABASES = {
-    "default" : dj_database_url.parse(env("DATABASE_URL"))
+    "default" : dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
 
@@ -190,13 +190,13 @@ AUTHENTICATION_BACKENDS = [
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_PORT = env("EMAIL_HOST")
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = env("EMAIL_HOST")  
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST")  
-DEFAULT_FROM_EMAIL = env("EMAIL_HOST")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
 #You can also set the SERVER_EMAIL setting to the same value as DEFAULT_FROM_EMAIL to ensure that error messages sent to the site administrators are also sent from the same email address.
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
