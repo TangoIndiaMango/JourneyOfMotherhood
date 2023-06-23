@@ -98,6 +98,15 @@ class PostSearchAPIView(ListAPIView):
                 Q(topic__icontains=search_query)
             )
         return queryset
+    
+class PostTopicFilterView(ListAPIView):
+    serializer_class = PostSerializer
+    pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        topic = self.kwargs['topic']
+        queryset = Post.objects.all(topic=topic)
+        return queryset
 
 
 class ReactionCreateView(APIView):
