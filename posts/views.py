@@ -105,7 +105,7 @@ class PostTopicFilterView(ListAPIView):
 
     def get_queryset(self):
         topic = self.kwargs['topic']
-        queryset = Post.objects.all(topic=topic)
+        queryset = Post.objects.filter(topic=topic)
         return queryset
 
 
