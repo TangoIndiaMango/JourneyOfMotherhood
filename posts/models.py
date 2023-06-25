@@ -47,7 +47,8 @@ class Post(models.Model):
         max_length=200, choices=TOPIC_CHOICES, default='REL')
 
     def __str__(self):
-        return f'{self.user} made a post with title {self.title} and has {self.views} view(s)'
+        return f'{self.user.first_name.capitalize()}, made a post with title "{self.title}" and has {self.views} view(s)'
+
 
 
 @receiver(post_save, sender=Post)
